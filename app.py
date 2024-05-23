@@ -7,7 +7,7 @@ import plotly.graph_objects as go
 # Download the input file from Google Drive
 download_url = 'https://drive.google.com/uc?id=12h0Dt1rLuxRHtacCMwCkXEKd5iooLYHG'
 output = 'data.csv'
-gdown.download(download_url, output, quiet=False)
+gdown.download(download_url, output, quiet=True)
 
 # Load the Excel file
 df = pd.read_csv(output)
