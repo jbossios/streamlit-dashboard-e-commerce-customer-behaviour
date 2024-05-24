@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import gdown
+import math
 import plotly.express as px
 import plotly.graph_objects as go
 
@@ -24,11 +25,14 @@ def get_gender_pie_chart(df, color_map):
     gender_dict = {'Gender': genders, 'Counts': [gender_counts[k] for k in genders]}
     df_gender_counts = pd.DataFrame(gender_dict)
     fig = px.pie(df_gender_counts, values='Counts', names='Gender', color='Gender', color_discrete_map=color_map)
-    fig.update_layout(legend=dict(
-        orientation = 'h',
-        yanchor="bottom",
-        y=1,
-    ))
+    fig.update_layout(
+        legend=dict(
+            orientation = 'h',
+            yanchor="bottom",
+            y=1,
+        ),
+        legend_title_text = 'Gender'
+    )
     return st.plotly_chart(fig, use_container_width=True)
 
 
@@ -46,43 +50,49 @@ def get_rating_vs_satisfaction_chart(df, marker_color):
 
 def get_spend_vs_age_chart(df, color_map):
     """ Total Spend vs Age """
+    df = df.groupby(['Gender', 'Age'])['Total Spend'].sum().to_frame().reset_index()
     fig = px.bar(df, x='Age', y='Total Spend', color='Gender', color_discrete_map=color_map)
-    fig.update_layout(legend=dict(
-        orientation = 'h',
-        yanchor="bottom",
-        y=1,
-    ))
+    fig.update_layout(
+        legend = dict(
+            orientation = 'h',
+            yanchor="bottom",
+            y=1,
+        ),
+        legend_title_text = 'Gender'
+    )
     return st.plotly_chart(fig, use_container_width=True)
+
 
 def get_rating_chart(df, color_map):
     """ Average Rating by Gender """
+    binning_start = math.floor(df['Average Rating'].min() * 10) / 10
+    binning_end = math.ceil(df['Average Rating'].max() * 10 ) / 10
     fig = go.Figure(
         data = [  
             go.Histogram(
                 x = df[df['Gender'] == 'Male']['Average Rating'],
+                xbins = dict(start=binning_start, end=binning_end, size=0.1),
                 name = 'Male',
-                marker = dict(
-                    color = 'rgba(0,0,0,0)',  # transparent fill
-                    line = dict(color=color_map['Male'], width=3)
-                )
+                marker = dict(color=color_map['Male'])
             ),
             go.Histogram(
                 x = df[df['Gender'] == 'Female']['Average Rating'],
+                xbins = dict(start=binning_start, end=binning_end, size=0.1),
                 name = 'Female',
-                marker = dict(
-                    color = 'rgba(0,0,0,0)',  # transparent fill
-                    line = dict(color=color_map['Female'], width=3)
-                )
+                marker = dict(color=color_map['Female'])
             )
         ],
         layout = go.Layout(legend={'traceorder':'reversed'})
     )
-    fig.update_layout(legend=dict(
-        orientation = 'h',
-        yanchor="bottom",
-        y=1,
-    ))
-    fig.update_layout(barmode='overlay')
+    fig.update_layout(
+        legend=dict(
+            orientation = 'h',
+            yanchor="bottom",
+            y=1,
+        ),
+        legend_title_text = 'Gender'
+    )
+    fig.update_layout(barmode='stack')
     fig.update_xaxes(title_text='Average Rating')
     fig.update_yaxes(title_text='Number of Occurences')
     return st.plotly_chart(fig, use_container_width=True)
@@ -90,66 +100,68 @@ def get_rating_chart(df, color_map):
 
 def get_days_last_purchase_chart(df, color_map):
     """ Days Since Last Purchase by Gender """
+    binning_start = math.floor(df['Days Since Last Purchase'].min())
+    binning_end = math.ceil(df['Days Since Last Purchase'].max())
     fig = go.Figure(
         data=[  
             go.Histogram(
                 x = df[df['Gender'] == 'Male']['Days Since Last Purchase'],
+                xbins = dict(start=binning_start, end=binning_end, size=5.0),
                 name = 'Male',
-                marker = dict(
-                    color = 'rgba(0,0,0,0)',  # transparent fill
-                    line = dict(color=color_map['Male'], width=3)
-                )
+                marker = dict(color=color_map['Male'])
             ),
             go.Histogram(
                 x = df[df['Gender'] == 'Female']['Days Since Last Purchase'],
+                xbins = dict(start=binning_start, end=binning_end, size=0.1),
                 name = 'Female',
-                marker = dict(
-                    color = 'rgba(0,0,0,0)',  # transparent fill
-                    line = dict(color=color_map['Female'], width=3)
-                )
+                marker = dict(color=color_map['Female'])
             )
         ],
         layout = go.Layout(legend={'traceorder':'reversed'})
     )
-    fig.update_layout(legend=dict(
-        orientation = 'h',
-        yanchor="bottom",
-        y=1,
-    ))
-    fig.update_layout(barmode='overlay')
+    fig.update_layout(
+        legend=dict(
+            orientation = 'h',
+            yanchor="bottom",
+            y=1,
+        ),
+        legend_title_text = 'Gender'
+    )
+    fig.update_layout(barmode='stack')
     fig.update_xaxes(title_text='Days Since Last Purchase')
     fig.update_yaxes(title_text='Number of Occurences')
     return st.plotly_chart(fig, use_container_width=True)
 
 
 def get_items_chart(df, color_map):
+    binning_start = math.floor(df['Days Since Last Purchase'].min())
+    binning_end = math.ceil(df['Days Since Last Purchase'].max())
     fig = go.Figure(
         data=[  
             go.Histogram(
                 x = df[df['Gender'] == 'Male']['Items Purchased'],
+                xbins = dict(start=binning_start, end=binning_end, size=1.0),
                 name = 'Male',
-                marker = dict(
-                    color = 'rgba(0,0,0,0)',  # transparent fill
-                    line = dict(color=color_map['Male'], width=3)
-                )
+                marker = dict(color=color_map['Male'])
             ),
             go.Histogram(
                 x = df[df['Gender'] == 'Female']['Items Purchased'],
+                xbins = dict(start=binning_start, end=binning_end, size=2.0),
                 name='Female',
-                marker = dict(
-                    color = 'rgba(0,0,0,0)',  # transparent fill
-                    line = dict(color=color_map['Female'], width=3)
-                )
+                marker = dict(color=color_map['Female'])
             )
         ],
         layout = go.Layout(legend={'traceorder':'reversed'})
     )
-    fig.update_layout(legend=dict(
-        orientation = 'h',
-        yanchor="bottom",
-        y=1,
-    ))
-    fig.update_layout(barmode='overlay')
+    fig.update_layout(
+        legend=dict(
+            orientation = 'h',
+            yanchor="bottom",
+            y=1,
+        ),
+        legend_title_text = 'Gender'
+    )
+    fig.update_layout(barmode='stack')
     fig.update_xaxes(title_text='Number of Items Purchased')
     fig.update_yaxes(title_text='Number of Occurences')
     return st.plotly_chart(fig, use_container_width=True)
@@ -171,11 +183,14 @@ def get_membership_chart(df, color_map):
         ],
         layout = go.Layout(legend={'traceorder':'reversed'})
     )
-    fig.update_layout(legend=dict(
-        orientation = 'h',
-        yanchor="bottom",
-        y=1,
-    ))
+    fig.update_layout(
+        legend=dict(
+            orientation = 'h',
+            yanchor="bottom",
+            y=1,
+        ),
+        legend_title_text = 'Gender'
+    )
     fig.update_layout(barmode='overlay')
     fig.update_xaxes(title_text='Membership Type')
     fig.update_yaxes(title_text='Number of clients')
