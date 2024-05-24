@@ -202,73 +202,72 @@ def main():
     # Display Dashboard's title
     st.title('E-commerce Customer Behaviour')
 
-    # Create columns
-    col1, col2 = st.columns(2, gap='medium')
-
-    # Display metric cards in column 1
-    with col1:
-        st.write("<h2 style='text-align: left;'>Overview</h2>", unsafe_allow_html=True)
-        for card in get_metric_cards(df):  # loop over metric cards
+    # Display metric cards
+    with st.container(border=True):
+        st.write("<h2 style='text-align: center;'>Overview</h2>", unsafe_allow_html=True)
+        for card in get_metric_cards(df):
             st.metric(**card)
 
-    # Display gender pie chart in column 2
-    with col2:
+    # Gender pie chart
+    with st.container(border=True):
         st.write("<h2 style='text-align: center;'>Gender distribution</h2>", unsafe_allow_html=True)
         get_gender_pie_chart(df, color_map)
 
-    # Show line divider to clearly separate charts relying on st.selectbox()
-    st.divider()
+    # Spend vs Rating + Rating vs Satisfaction
+    with st.container(border=True):
+        # Let user select gender(s)
+        gender_list = ['All', 'Female', 'Male']
+        selected_genders = st.selectbox('Select gender(s)', gender_list, index=0)
+        if selected_genders != 'All':
+            df_selected_genders = df[df['Gender'] == selected_genders]
+        else:
+            df_selected_genders = df
+        color_for_selected_gender = color_map[selected_genders]
 
-    # Let user select gender(s)
-    gender_list = ['All', 'Female', 'Male']
-    selected_genders = st.selectbox('Select gender(s)', gender_list, index=0)
-    if selected_genders != 'All':
-        df_selected_genders = df[df['Gender'] == selected_genders]
-    else:
-        df_selected_genders = df
-    color_for_selected_gender = color_map[selected_genders]
+        # Create columns
+        col1, col2 = st.columns(2, gap='medium')
 
-    # Create columns
-    col1, col2 = st.columns(2, gap='medium')
+        # Spend vs rating chart
+        with col1:
+            title = 'Total spend vs Average rating'
+            st.write("<h2 style='text-align: center;'>"+title+"</h2>", unsafe_allow_html=True)
+            get_spend_vs_rating_chart(df_selected_genders, color_for_selected_gender)
 
-    # Spend vs rating chart
-    with col1:
-        title = 'Total spend vs Average rating'
-        st.write("<h2 style='text-align: center;'>"+title+"</h2>", unsafe_allow_html=True)
-        get_spend_vs_rating_chart(df_selected_genders, color_for_selected_gender)
-
-    # Average Rating vs Satisfaction Level
-    with col2:
-        title = 'Average Rating vs Satisfaction Level'
-        st.write("<h2 style='text-align: center;'>"+title+"</h2>", unsafe_allow_html=True)
-        get_rating_vs_satisfaction_chart(df_selected_genders, color_for_selected_gender)
-
-    st.divider()
+        # Average Rating vs Satisfaction Level
+        with col2:
+            title = 'Average Rating vs Satisfaction Level'
+            st.write("<h2 style='text-align: center;'>"+title+"</h2>", unsafe_allow_html=True)
+            get_rating_vs_satisfaction_chart(df_selected_genders, color_for_selected_gender)
 
     # Spend vs Age
-    title = 'Total spend vs Age by Gender'
-    st.write("<h2 style='text-align: center;'>"+title+"</h2>", unsafe_allow_html=True)
-    get_spend_vs_age_chart(df, color_map)
+    with st.container(border=True):
+        title = 'Total spend vs Age by Gender'
+        st.write("<h2 style='text-align: center;'>"+title+"</h2>", unsafe_allow_html=True)
+        get_spend_vs_age_chart(df, color_map)
 
     # Rating distribution by gender
-    title = 'Rating by Gender'
-    st.write("<h2 style='text-align: center;'>"+title+"</h2>", unsafe_allow_html=True)
-    get_rating_chart(df, color_map)
+    with st.container(border=True):
+        title = 'Rating by Gender'
+        st.write("<h2 style='text-align: center;'>"+title+"</h2>", unsafe_allow_html=True)
+        get_rating_chart(df, color_map)
 
     # Days Since Last Purchase distribution by gender
-    title = 'Days Since Last Purchase by Gender'
-    st.write("<h2 style='text-align: center;'>"+title+"</h2>", unsafe_allow_html=True)
-    get_days_last_purchase_chart(df, color_map)
+    with st.container(border=True):
+        title = 'Days Since Last Purchase by Gender'
+        st.write("<h2 style='text-align: center;'>"+title+"</h2>", unsafe_allow_html=True)
+        get_days_last_purchase_chart(df, color_map)
 
     # Items purchased distribution by gender
-    title = 'Number of Items Purchased by Gender'
-    st.write("<h2 style='text-align: center;'>"+title+"</h2>", unsafe_allow_html=True)
-    get_items_chart(df, color_map)
+    with st.container(border=True):
+        title = 'Number of Items Purchased by Gender'
+        st.write("<h2 style='text-align: center;'>"+title+"</h2>", unsafe_allow_html=True)
+        get_items_chart(df, color_map)
 
     # Membership type distribution by gender
-    title = 'Membership Type by Gender'
-    st.write("<h2 style='text-align: center;'>"+title+"</h2>", unsafe_allow_html=True)
-    get_membership_chart(df, color_map)
+    with st.container(border=True):
+        title = 'Membership Type by Gender'
+        st.write("<h2 style='text-align: center;'>"+title+"</h2>", unsafe_allow_html=True)
+        get_membership_chart(df, color_map)
 
 if __name__ == '__main__':
     main()
