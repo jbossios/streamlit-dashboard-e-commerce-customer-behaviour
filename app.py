@@ -184,6 +184,15 @@ def get_membership_chart(df, color_map):
 
 def main():
 
+    # Sidebar
+    with st.sidebar:
+        st.markdown('''# About''')
+        st.markdown('''Powered by Streamlit and Plotly''')
+        st.markdown('''**Data source:** [kaggle.com](https://www.kaggle.com/datasets/uom190346a/e-commerce-customer-behavior-dataset)''')
+        st.markdown('''**Git repository:** [github.com](https://github.com/jbossios/streamlit-dashboard-e-commerce-customer-behaviour)''')
+        st.markdown('''**My profile on LinkedIn:** [linkedin.com](https://www.linkedin.com/in/jonathan-bossio/)''')
+        st.markdown('''**My website:** [jonathanbossio.com](https://www.jonathanbossio.com)''')
+
     # Download the input file from Google Drive
     download_url = 'https://drive.google.com/uc?id=12h0Dt1rLuxRHtacCMwCkXEKd5iooLYHG'
     output = 'data.csv'
